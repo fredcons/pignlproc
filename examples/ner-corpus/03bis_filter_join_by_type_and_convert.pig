@@ -28,14 +28,20 @@ result =
   GENERATE title, sentenceOrder, linkBegin, linkEnd, sentence;
 
 -- Reorder and group by article title and sentence order
-ordered = ORDER result BY title ASC, sentenceOrder ASC;
+--ordered = ORDER result BY title ASC, sentenceOrder ASC;
 
-grouped = GROUP ordered BY (title, sentenceOrder);
+--grouped = GROUP ordered BY (title, sentenceOrder);
+grouped = GROUP result BY (title, sentenceOrder);
 
 -- Convert to the OpenNLP training format
 
+--opennlp_corpus =
+-- FOREACH grouped
+-- GENERATE merge(ordered.sentence, ordered.linkBegin, ordered.linkEnd);
+
 opennlp_corpus =
  FOREACH grouped
- GENERATE merge(ordered.sentence, ordered.linkBegin, ordered.linkEnd);
+ GENERATE merge(result.sentence, result.linkBegin, result.linkEnd);
+
 
 STORE opennlp_corpus INTO '$OUTPUT/$LANG/opennlp_$TYPE_NAME';
